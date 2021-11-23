@@ -1,0 +1,136 @@
+-- Options
+
+local option = {
+anchor = _G.anchor -- anchors your rootpart & torso
+jitter = Vector3.new(0,0,0) -- XYZ net velocity option
+headscale = 3 -- scale for the camera head
+chat = true -- chat option
+rightarmoffset = Vector3.new(0,0,0) -- XYZ position
+leftarmoffset = Vector3.new(0,0,0) -- XYZ position
+head = _G.headhat -- accessory hat as head
+rightarm = _G.rightarm -- accessory hat as rightarm
+leftarm = _G.leftarm -- accessory hat as leftarm
+headtransparency = _G.headtransparency
+}
+
+-- Basic variables
+
+local Plr = game.Players.LocalPlayer
+local Gui = game.StarterGui
+local Char = Plr.Character
+
+-- VR config & camera variables
+
+local cam = workspace.CurrentCamera
+
+cam.CameraType = "Scriptable"
+
+cam.HeadScale = 3
+
+Gui:SetCore("VRLaserPointerMode", 0)
+Gui:SetCore("VREnableControllerModels", false)
+
+-- functions & vr & more variables
+
+local function createpart(size, name) -- thanks will64!
+	local Part = Instance.new("Part", char)
+	Part.CFrame = char.HumanoidRootPart.CFrame
+	Part.Size = size
+	Part.Transparency = 1
+	Part.CanCollide = false
+	Part.Anchored = true
+	Part.Name = name
+	return Part
+end
+
+local R1down = false
+local moveHandL = createpart(Vector3.new(1,1,2), "moveRH")
+local moveHandR = createpart(Vector3.new(1,1,2), "moveLH")
+local moveHead = createpart(Vector3.new(1,1,1), "moveH")
+
+input.UserCFrameChanged:connect(function(part,move) -- thanks will64! again.
+	if part == Enum.UserCFrame.Head then
+		moveHead.CFrame = cam.CFrame*(CFrame.new(move.p*(cam.HeadScale-1))*move)
+	elseif part == Enum.UserCFrame.LeftHand then
+		moveHandL.CFrame = cam.CFrame*(CFrame.new(move.p*(cam.HeadScale-1))*move*CFrame.Angles(math.rad(options.leftarmoffset.X),math.rad(options.leftarmoffset.Y),math.rad(options.leftarmoffset.Z)))
+	elseif part == Enum.UserCFrame.RightHand then
+		moveHandR.CFrame = cam.CFrame*(CFrame.new(move.p*(cam.HeadScale-1))*move*CFrame.Angles(math.rad(options.rightarmoffset.X),math.rad(options.rightarmoffset.Y),math.rad(options.rightarmoffset.Z)))
+	end
+end)
+
+local function Align(PartToMove,TargetPart,Offset) -- thanks will64! again and again.
+    local Position = Instance.new("AlignPosition", PartToMove)
+    local Orientation = Instance.new("AlignOrientation", PartToMove)
+    
+    local AttachmentA = Instance.new("Attachment", PartToMove)
+    local AttachmentB = Instance.new("Attachment", TargetPart)
+    
+    AttachmentB.CFrame = Offset
+    
+    Position.MaxVelocity = 30^11
+    Orientation.MaxTorque = 30^11
+    
+    Position.MaxForce = 30^11
+    Orientation.MaxAngularVelocity = 30^11
+    
+    Position.Responsiveness = 200
+    Orientation.Responsiveness = 200
+    
+    Position.Attachment0 = AttachmentA
+    Position.Attachment1 = AttachmentB
+    Orientation.Attachment0 = AttachmentA
+    Orientation.Attachment1 = AttachmentB
+end
+
+option.headhat.Handle:BreakJoints()
+option.rightarm.Handle:BreakJoints()
+option.leftarm.Handle:BreakJoints()
+option.headhat.Transparency = headtransparency
+Char.Torso.Anchored = option.anchor
+Char.HumanoidRootPart.Anchored = option.anchor
+
+Align(option.headhat,moveHead,CFrame.new(0,0,0))
+Align(option.rightarm.Handle,moveHandR,CFrame.new(0,0,0))
+Align(option.leftarm.Handle,moveHandL,CFrame.new(0,0,0))
+
+input.InputChanged:connect(function(key)
+	if key.KeyCode == Enum.KeyCode.ButtonR1 then
+		if key.Position.Z > 0.9 then
+			R1down = true
+		else
+			R1down = false
+		end
+	end
+end)
+
+input.InputChanged:connect(function(key)
+	if key.KeyCode == Enum.KeyCode.ButtonR1 then
+		if key.Position.Z > 0.9 then
+			R1down = true
+		else
+			R1down = false
+		end
+	end
+end)
+
+input.InputBegan:connect(function(key)
+	if key.KeyCode == Enum.KeyCode.ButtonR1 then
+		R1down = true
+	end
+end)
+
+input.InputEnded:connect(function(key)
+	if key.KeyCode == Enum.KeyCode.ButtonR1 then
+		R1down = false
+	end
+end)
+
+game:GetService("RunService").RenderStepped:connect(function()
+	if R1down then
+		cam.CFrame = cam.CFrame:Lerp(cam.CoordinateFrame + (moveHandR.CFrame*CFrame.Angles(-math.rad(options.rightarmoffset.X),-math.rad(options.rightarmoffset.Y),math.rad(180-options.rightarmoffset.X))).LookVector * cam.HeadScale/2, 0.5)
+	end
+end)
+
+if option.chat == true then
+print("chat not added yet!")
+end
