@@ -154,6 +154,9 @@ end
 -- Net
 
 game:GetService("RunService").Heartbeat:Connect(function()
+    settings().Physics.AllowSleep = false
+    sethiddenproperty(game.Players.LocalPlayer,"MaximumSimulationRadius",math.huge)
+    sethiddenproperty(game.Players.LocalPlayer,"SimulationRadius",999999999)
     for i,v in pairs(Char:GetChildren()) do
         if v:IsA("Accessory") then
             v.Handle.Velocity = option.jitter
