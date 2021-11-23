@@ -82,10 +82,26 @@ local function Align(PartToMove,TargetPart,Offset) -- thanks will64! again and a
     Orientation.Attachment1 = AttachmentB
 end
 
+for i,v in pairs(Char.Humanoid:GetAccessories()) do
+	if v:FindFirstChild("Handle") then
+		local handle = v.Handle
+		
+		if v.Name == options.rightarm and not handR then
+			handle:FindFirstChildOfClass("SpecialMesh"):Destroy()
+			handR = v
+		elseif v.Name == options.leftarm and not handL then
+			handle:FindFirstChildOfClass("SpecialMesh"):Destroy()
+			handL = v
+		elseif v.Name == options.headhat and not head then
+			head = v
+		end
+	end
+end
+
 option.headhat.Handle:BreakJoints()
 option.rightarm.Handle:BreakJoints()
 option.leftarm.Handle:BreakJoints()
-option.headhat.Transparency = headtransparency
+option.headhat.Handle.Transparency = headtransparency
 Char.Torso.Anchored = option.anchor
 Char.HumanoidRootPart.Anchored = option.anchor
 
@@ -132,5 +148,16 @@ game:GetService("RunService").RenderStepped:connect(function()
 end)
 
 if option.chat == true then
-print("chat not added yet!")
+print("chat isnt added yet!")
 end
+
+-- Net
+
+game:GetService("RunService").Heartbeat:Connect(function()
+    for i,v in pairs(Char:GetChildren()) do
+        if v:IsA("Accessory") then
+            v.Handle.Velocity = option.jitter
+            v.Handle.CFrame = v.Handle.CFrame
+        end
+    end
+end)
