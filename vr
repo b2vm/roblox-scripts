@@ -2,7 +2,7 @@
 
 local option = {
 anchor = _G.anchor -- anchors your rootpart & torso
-jitter = Vector3.new(0,0,0) -- XYZ net velocity option
+jitter = _G.jitter -- XYZ net velocity option
 headscale = 3 -- scale for the camera head
 chat = true -- chat option
 rightarmoffset = Vector3.new(0,0,0) -- XYZ position
