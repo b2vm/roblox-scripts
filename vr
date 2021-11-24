@@ -84,16 +84,16 @@ local function Align(PartToMove,TargetPart,Offset) -- thanks will64! again and a
     Orientation.Attachment1 = AttachmentB
 end
 
-if option.rightarmmesh == true then
-    for i,v in pairs(Char[option.rightarm]:GetChildren()) do
+if option.rightarmmesh == false then
+    for i,v in pairs(Char:FindFirstChild(option.rightarm):GetChildren()) do
         if v:IsA("SpecialMesh") then
             v:Destroy()
         end
     end
 end
 
-if option.leftarmmesh == true then
-    for i,v in pairs(Char[option.leftarm]:GetChildren()) do
+if option.leftarmmesh == false then
+    for i,v in pairs(Char:FindFirstChild(option.leftarm):GetChildren()) do
         if v:IsA("SpecialMesh") then
             v:Destroy()
         end
