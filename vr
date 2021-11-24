@@ -10,6 +10,8 @@ leftarmoffset = Vector3.new(0,0,0) -- XYZ position
 head = _G.headhat -- accessory hat as head
 rightarm = _G.rightarm -- accessory hat as rightarm
 leftarm = _G.leftarm -- accessory hat as leftarm
+rightarmmesh = _G.rightarmmesh -- disable/enable mesh on your rightarm accessory
+leftarmmesh = _G.leftarmmesh -- disable/enable mesh on your leftarm accessory
 headtransparency = _G.headtransparency
 }
 
@@ -82,20 +84,20 @@ local function Align(PartToMove,TargetPart,Offset) -- thanks will64! again and a
     Orientation.Attachment1 = AttachmentB
 end
 
-for i,v in pairs(Char.Humanoid:GetAccessories()) do
-	if v:FindFirstChild("Handle") then
-		local handle = v.Handle
-		
-		if v.Name == options.rightarm and not handR then
-			handle:FindFirstChildOfClass("SpecialMesh"):Destroy()
-			handR = v
-		elseif v.Name == options.leftarm and not handL then
-			handle:FindFirstChildOfClass("SpecialMesh"):Destroy()
-			handL = v
-		elseif v.Name == options.headhat and not head then
-			head = v
-		end
-	end
+if option.rightarmmesh == true then
+    for i,v in pairs(Char[option.rightarm]:GetChildren()) do
+        if v:IsA("SpecialMesh") then
+            v:Destroy()
+        end
+    end
+end
+
+if option.leftarmmesh == true then
+    for i,v in pairs(Char[option.leftarm]:GetChildren()) do
+        if v:IsA("SpecialMesh") then
+            v:Destroy()
+        end
+    end
 end
 
 option.headhat.Handle:BreakJoints()
